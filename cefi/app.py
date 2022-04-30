@@ -4,7 +4,6 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import asyncio
 import aiohttp
-import json
 
 
 app = FastAPI()
@@ -22,12 +21,14 @@ app.add_middleware(
 
 class BackgroundProcess:
     def __init__(self):
-        self.prices = {"BTCUSDT": None, "ETHUSDT": None, "LUNAUSDT": None, "BNBUSDT": None}
+        self.symbols = ["ETHUSDT", "AAVEUSDT", "UNIUSDT", "LINKUSDT", "1INCHUSDT"]
+        self.buy_price = {}
+        self.sell_price = {}
 
     @staticmethod
-    async def fetch(session, url):
+    async def fetch(session, url, symbol):
         async with session.get(url) as resp:
-            return await resp.json()
+            return await resp.json(), symbol
 
     async def get_prices(self):
         while True:
@@ -35,13 +36,14 @@ class BackgroundProcess:
             loop = asyncio.get_event_loop()
             async with aiohttp.ClientSession() as session:
                 tasks = []
-                for symbol in self.prices:
-                    url = 'https://api.binance.com/api/v1/ticker/price?symbol={0}'.format(symbol)
-                    tasks.append(loop.create_task(self.fetch(session, url)))
+                for symbol in self.symbols:
+                    url = 'https://api.binance.com/api/v1/depth?symbol={0}'.format(symbol)
+                    tasks.append(loop.create_task(self.fetch(session, url, symbol)))
                 for result in asyncio.as_completed(tasks):
                     try:
-                        price_dict = await result
-                        self.prices[price_dict['symbol']] = price_dict['price']
+                        price_dict, symbol = await result
+                        self.buy_price[symbol] = float(price_dict['asks'][0][0])  # Assuming enough volume on Binance, we can buy at the lowest ask
+                        self.sell_price[symbol] = float(price_dict['bids'][0][0])  # Assuming enough volume on Binance, we can sell at the highest bid
                     except aiohttp.client_exceptions.ClientConnectorError as e:
                         print(e)
 
@@ -54,9 +56,14 @@ async def app_startup():
     asyncio.create_task(process.get_prices())
 
 
-@app.get("/")
+@app.get("/buy")
 def root():
-    return process.prices
+    return process.buy_price
+
+
+@app.get("/sell")
+def root():
+    return process.sell_price
 
 
 if __name__ == '__main__':
