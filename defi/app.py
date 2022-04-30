@@ -1,10 +1,8 @@
-import requests
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import asyncio
 import aiohttp
-import json
 
 
 app = FastAPI()
