@@ -3,6 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import asyncio
 import aiohttp
+import pandas as pd
+import numpy as np
+from babel.numbers import format_currency
 
 
 app = FastAPI()
@@ -26,6 +29,8 @@ class BackgroundProcess:
         self.dex_buy_price = {}
         self.cex_sell_price = {}
         self.dex_sell_price = {}
+        self.df_buy_cex_sell_dex = pd.DataFrame()
+        self.df_buy_dex_sell_cex = pd.DataFrame()
 
     @staticmethod
     async def fetch(session, url, exchange, order):
@@ -57,6 +62,20 @@ class BackgroundProcess:
                                 self.dex_sell_price = price_dict
                     except aiohttp.client_exceptions.ClientConnectorError as e:
                         print(e)
+                self.df_buy_cex_sell_dex = pd.concat([pd.DataFrame.from_dict(self.cex_buy_price, orient='index', columns=['cex_buy_price']),
+                                                      pd.DataFrame.from_dict(self.dex_sell_price, orient='index', columns=['dex_sell_price'])], axis=1)
+                self.df_buy_cex_sell_dex['trade_size'] = (100000 / self.df_buy_cex_sell_dex['cex_buy_price']).astype(int)
+                self.df_buy_cex_sell_dex['raw_profit'] = ((self.df_buy_cex_sell_dex['dex_sell_price'] - self.df_buy_cex_sell_dex['cex_buy_price']) * self.df_buy_cex_sell_dex['trade_size']).round(2)
+                self.df_buy_cex_sell_dex['profit'] = self.df_buy_cex_sell_dex['raw_profit'].apply(lambda x: format_currency(x, currency="USD", locale="en_US"))
+                self.df_buy_cex_sell_dex['profitable_trade'] = np.where(self.df_buy_cex_sell_dex['raw_profit'] > 0, True, False)
+                self.df_buy_cex_sell_dex.drop('raw_profit', 1, inplace=True)
+                self.df_buy_dex_sell_cex = pd.concat([pd.DataFrame.from_dict(self.dex_buy_price, orient='index', columns=['dex_buy_price']),
+                                                      pd.DataFrame.from_dict(self.cex_sell_price, orient='index', columns=['cex_sell_price'])], axis=1)
+                self.df_buy_dex_sell_cex['trade_size'] = (100000 / self.df_buy_dex_sell_cex['dex_buy_price']).astype(int)
+                self.df_buy_dex_sell_cex['raw_profit'] = ((self.df_buy_dex_sell_cex['cex_sell_price'] - self.df_buy_dex_sell_cex['dex_buy_price']) * self.df_buy_dex_sell_cex['trade_size']).round(2)
+                self.df_buy_dex_sell_cex['profit'] = self.df_buy_dex_sell_cex['raw_profit'].apply(lambda x: format_currency(x, currency="USD", locale="en_US"))
+                self.df_buy_dex_sell_cex['profitable_trade'] = np.where(self.df_buy_dex_sell_cex['raw_profit'] > 0, True, False)
+                self.df_buy_dex_sell_cex.drop('raw_profit', 1, inplace=True)
 
 
 process = BackgroundProcess()
@@ -69,7 +88,7 @@ async def app_startup():
 
 @app.get("/")
 def root():
-    return str(process.cex_buy_price) + ' ' + str(process.dex_buy_price) + ' '  + str(process.cex_sell_price) + ' '  + str(process.dex_sell_price)
+    return process.df_buy_cex_sell_dex.to_string()
 
 
 if __name__ == '__main__':
