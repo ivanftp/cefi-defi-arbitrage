@@ -2,7 +2,7 @@
 A simple Cefi-Defi live arbitrage 
 opportunity detection tool
 
-# Installing required packages
+# Installing Required Packages
 Please run the following commands to install the required libraries in the project's requirements.txt file
 ```
 python -m pip install -r requirements.txt
@@ -19,7 +19,7 @@ The cefi and defi apps are APIs with processes running in the background to pull
 The arbitrage app is a Flask web application which displays a dashboard with the prices, expected profit and is 
 used to notify the user when there is an arbitrage opportunity.
 
-# Steps to get started
+# Getting Started
 1. Please run app.py found in cefi-defi-arbitrage/cefi/app.py
 2. Please run app.py found in cefi-defi-arbitrage/defi/app.py
 3. Please run app.py found in cefi-defi-arbitrage/arbitrage/app.py
