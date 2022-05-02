@@ -16,6 +16,7 @@ def is_float(item):
     ids=["str_data"],
 )
 def test_bid_price(test_data):
+    # pull data from binance and test whether bid price and volume is a float
     bid = test_data['bids'][0]
     assert is_float(bid[0]) and is_float(bid[1])
 
@@ -26,5 +27,6 @@ def test_bid_price(test_data):
     ids=["str_data"],
 )
 def test_ask_price(test_data):
+    # pull data from binance and test whether ask price and volume is a float
     ask = test_data['asks'][0]
     assert is_float(ask[0]) and is_float(ask[1])

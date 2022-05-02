@@ -8,6 +8,7 @@ import pytest
     ids=["str_data"],
 )
 def test_from_token_amount(test_data):
+    # pull data from 1inch and test whether fromTokenAmount is a positive integer
     fromTokenAmount = test_data['fromTokenAmount']
     assert (fromTokenAmount.startswith('-') == False) and fromTokenAmount[1:].isdigit()
 
@@ -18,5 +19,6 @@ def test_from_token_amount(test_data):
     ids=["str_data"],
 )
 def test_to_token_amount(test_data):
+    # pull data from 1inch and test whether toTokenAmount is a positive integer
     toTokenAmount = test_data['toTokenAmount']
     assert (toTokenAmount.startswith('-') == False) and toTokenAmount[1:].isdigit()
