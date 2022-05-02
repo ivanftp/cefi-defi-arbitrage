@@ -1,0 +1,22 @@
+version: '3.8'
+services:
+  cefi:
+    build: ./cefi
+    command: python app.py
+    ports:
+      - 3000:3000
+
+  defi:
+    build: ./defi
+    command: python app.py
+    ports:
+      - 3001:3001
+
+  arbitrage:
+    build: ./arbitrage
+    command: python app.py
+    ports:
+      - 3002:3002
+    depends_on:
+      - cefi
+      - defi

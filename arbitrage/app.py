@@ -7,8 +7,8 @@ import requests
 
 app = Flask(__name__, template_folder="templates")
 
-cex_url = 'http://localhost:3000/'
-dex_url = 'http://localhost:3001/'
+cex_url = 'http://cefi:3000/'
+dex_url = 'http://defi:3001/'
 
 
 @app.route("/")
@@ -58,4 +58,4 @@ def buy_dex_sell_cex():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=3002, host='0.0.0.0')
+    app.run(debug=False, port=3002, host='0.0.0.0')
