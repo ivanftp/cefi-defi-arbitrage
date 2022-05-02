@@ -24,6 +24,10 @@ In the command line navigate to the project folder (cefi-defi-arbitrage) and run
 ```
 docker-compose up -d
 ```
+Next, to view the dashboard, open your Chrome browser and go to:
+```
+http://localhost:3002
+```
 
 # Unit Testing
 Unit tests were written using the pytest library. There is a tests folder in each app. To run the unit tests, navigate to the project directory in 
