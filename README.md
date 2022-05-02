@@ -20,11 +20,10 @@ The arbitrage app is a Flask web application which displays a dashboard with the
 used to notify the user when there is an arbitrage opportunity.
 
 # Getting Started
-1. Please run app.py found in cefi-defi-arbitrage/cefi/app.py
-2. Please run app.py found in cefi-defi-arbitrage/defi/app.py
-3. Please run app.py found in cefi-defi-arbitrage/arbitrage/app.py
-4. Open your Chrome web browser and go to http://localhost:3002 to view the dashboard
-5. Wait for a few seconds for the dashbaord to be updated with live prices, profits and arbitrage opportunities
+In the command line navigate to the project folder (cefi-defi-arbitrage) and run:
+```
+docker-compose up -d
+```
 
 # Unit Testing
 Unit tests were written using the pytest library. There is a tests folder in each app. To run the unit tests, navigate to the project directory in 
