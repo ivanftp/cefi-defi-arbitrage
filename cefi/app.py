@@ -36,7 +36,7 @@ class BackgroundProcess:
             loop = asyncio.get_event_loop()
             async with aiohttp.ClientSession() as session:  # aiohttp library is used to query prices of different coins simultaneously
                 tasks = []
-                for symbol in self.symbols:
+                for symbol in self.symbols:  # loop through each coin and fetch bid and ask prices
                     url = 'https://api.binance.com/api/v1/depth?symbol={0}'.format(symbol)
                     tasks.append(loop.create_task(self.fetch(session, url, symbol)))
                 for result in asyncio.as_completed(tasks):
@@ -53,17 +53,17 @@ process = BackgroundProcess()
 
 @app.on_event('startup')
 async def app_startup():
-    asyncio.create_task(process.get_prices())
+    asyncio.create_task(process.get_prices())  # Start background task to pull crypto prices from Binance
 
 
 @app.get("/buy")
 def root():
-    return process.buy_price
+    return process.buy_price  # Retrieve buy price from background process
 
 
 @app.get("/sell")
 def root():
-    return process.sell_price
+    return process.sell_price  # Retrieve sell price from background process
 
 
 if __name__ == '__main__':
