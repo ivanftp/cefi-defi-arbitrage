@@ -2,12 +2,6 @@
 A simple Cefi-Defi live arbitrage 
 opportunity detection tool
 
-# Installing Required Packages
-Please run the following commands to install the required libraries in the project's requirements.txt file
-```
-python -m pip install -r requirements.txt
-```
-
 # Project Architecture
 There are 3 apps in this project. 
 - cefi app, where crypto prices are pulled using the Binance public api
