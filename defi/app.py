@@ -20,10 +20,13 @@ app.add_middleware(
 
 class BackgroundProcess:
     def __init__(self):
-        # To account for DEX volume and slippage, trade size assumed to be approximately $100k USDT
-        self.symbols = ["ETHUSDT", "AAVEUSDT", "UNIUSDT", "LINKUSDT", "1INCHUSDT"]
+        # Background process to pull crypto prices from 1inch aggregator
+        self.symbols = ["ETHUSDT", "AAVEUSDT", "UNIUSDT", "LINKUSDT", "1INCHUSDT"]  # coins we are trading
         self.buy_price = {}
         self.sell_price = {}
+
+        # "Amount" parameter is adjusted to account for DEX volume and slippage, trade size assumed to be approximately
+        # $100k USDT
         self.buy_url = {
             "ETHUSDT": "https://api.1inch.io/v4.0/1/quote?fromTokenAddress=0xdac17f958d2ee523a2206206994597c13d831ec7&toTokenAddress=0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2&amount=100000000000",
             "AAVEUSDT": "https://api.1inch.io/v4.0/1/quote?fromTokenAddress=0xdac17f958d2ee523a2206206994597c13d831ec7&toTokenAddress=0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9&amount=100000000000",
@@ -47,7 +50,7 @@ class BackgroundProcess:
         while True:
             await asyncio.sleep(1)
             loop = asyncio.get_event_loop()
-            async with aiohttp.ClientSession() as session:
+            async with aiohttp.ClientSession() as session:  # aiohttp library is used to query prices of different coins simultaneously
                 tasks = []
                 for symbol in self.symbols:
                     sell_url = self.sell_url[symbol]

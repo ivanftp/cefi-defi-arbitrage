@@ -20,7 +20,8 @@ app.add_middleware(
 
 class BackgroundProcess:
     def __init__(self):
-        self.symbols = ["ETHUSDT", "AAVEUSDT", "UNIUSDT", "LINKUSDT", "1INCHUSDT"]
+        # Background process to pull crypto prices from binance
+        self.symbols = ["ETHUSDT", "AAVEUSDT", "UNIUSDT", "LINKUSDT", "1INCHUSDT"]  # coins we are trading
         self.buy_price = {}
         self.sell_price = {}
 
@@ -33,7 +34,7 @@ class BackgroundProcess:
         while True:
             await asyncio.sleep(1)
             loop = asyncio.get_event_loop()
-            async with aiohttp.ClientSession() as session:
+            async with aiohttp.ClientSession() as session:  # aiohttp library is used to query prices of different coins simultaneously
                 tasks = []
                 for symbol in self.symbols:
                     url = 'https://api.binance.com/api/v1/depth?symbol={0}'.format(symbol)

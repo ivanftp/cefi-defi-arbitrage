@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 from babel.numbers import format_currency
 from flask import Flask, render_template
-import json
 import requests
 
 
@@ -21,13 +20,13 @@ def calculate_profit(buy_price, sell_price, buy_column_name, sell_column_name):
     df = pd.concat(
         [pd.DataFrame.from_dict(buy_price, orient='index', columns=[buy_column_name]).round(3),
          pd.DataFrame.from_dict(sell_price, orient='index', columns=[sell_column_name]).round(3)], axis=1)
-    df['trade_size'] = (100000 / df[buy_column_name]).astype(int)
+    df['trade_size'] = (100000 / df[buy_column_name]).astype(int)  # Calculate trade size assuming $100k USDT per trade
     df['raw_profit'] = (
             (df[sell_column_name] - df[buy_column_name]) *
             df['trade_size']).round(2)
     df['profit'] = df['raw_profit'].apply(
         lambda x: format_currency(x, currency="USD", locale="en_US"))
-    df['profitable_trade'] = np.where(df['raw_profit'] > 0, True, False)
+    df['profitable_trade'] = np.where(df['raw_profit'] > 0, True, False)  # Determine if arbitrage opportunity exists
     df.drop('raw_profit', 1, inplace=True)
     df.index.name = 'crypto'
     df = df.reset_index()
