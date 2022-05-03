@@ -1,12 +1,11 @@
 # CeFi DeFi Arbitrage
-A simple Cefi-Defi live arbitrage 
-opportunity detection tool
+A simple Cefi-Defi live arbitrage opportunity detection tool.
 
 # Project Architecture
-There are 3 apps in this project. 
-- cefi app, where crypto prices are pulled using the Binance public api
-- defi app, where crypto prices are pulled from the 1inch data aggregator
-- arbitrage app, the prices between the cefi and defi are compared to identify arbitrage opportunities
+There are 3 apps in this project: 
+- cefi app, where crypto prices are pulled using the Binance public api.
+- defi app, where crypto prices are pulled from the 1inch data aggregator.
+- arbitrage app, the prices between the cefi and defi are compared to identify arbitrage opportunities.
 
 The cefi and defi apps are APIs with processes running in the background to pull prices. 
 
